@@ -1,0 +1,19 @@
+{
+  "name": "agency-boss-site",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev --host 127.0.0.1",
+    "build": "nuxt build",
+    "preview": "nuxt preview --host 127.0.0.1"
+  },
+  "dependencies": {
+    "@lucide/vue": "^1.24.0",
+    "nuxt": "^4.4.8",
+    "swiper": "^14.0.5",
+    "typescript": "^5.8.3",
+    "vue": "^3.5.17"
+  },
+  "devDependencies": {}
+}
