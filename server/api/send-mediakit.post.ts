@@ -1,6 +1,3 @@
-import { existsSync } from 'node:fs'
-import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
 import { Resend } from 'resend'
 
 interface SendMediaKitBody {
@@ -8,26 +5,8 @@ interface SendMediaKitBody {
 }
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const attachmentFilename = 'Agency BOSS April.xlsx'
-
-function resolveMediaKitPath() {
-  const candidates = [
-    join(process.cwd(), 'public/assets/agency-boss-april.xlsx'),
-    join(process.cwd(), '.output/public/assets/agency-boss-april.xlsx'),
-    join(process.cwd(), '../public/assets/agency-boss-april.xlsx'),
-  ]
-
-  const found = candidates.find((candidate) => existsSync(candidate))
-
-  if (!found) {
-    throw createError({
-      statusCode: 500,
-      message: 'Media kit file is not available',
-    })
-  }
-
-  return found
-}
+const mediaKitUrl =
+  'https://docs.google.com/spreadsheets/d/1UzL097-AVyefaGWv5DvXLYQDvh6wWKvFDbR6oIVrVdY/edit?gid=0#gid=0'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event)
@@ -48,7 +27,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const mediaKit = await readFile(resolveMediaKitPath())
   const resend = new Resend(config.resendApiKey)
 
   const response = await resend.emails.send({
@@ -60,20 +38,15 @@ export default defineEventHandler(async (event) => {
       <div style="font-family: Arial, sans-serif; color: #111827; line-height: 1.5;">
         <h1 style="margin: 0 0 16px;">Медиакит AGENCY BOSS</h1>
         <p>Здравствуйте!</p>
-        <p>Во вложении — таблица с актуальным списком площадок и ориентировочными условиями размещения.</p>
+        <p>Таблица с актуальным списком площадок и ориентировочными условиями размещения доступна по ссылке:</p>
+        <p>
+          <a href="${mediaKitUrl}" style="color: #0f6fff; font-weight: 700;">Открыть медиакит AGENCY BOSS</a>
+        </p>
         <p>Если хотите получить подборку под конкретный продукт, ответьте на это письмо или напишите нам в Telegram.</p>
         <p style="margin-top: 24px;">AGENCY BOSS</p>
       </div>
     `,
-    text:
-      'Здравствуйте! Во вложении — таблица с актуальным списком площадок и ориентировочными условиями размещения. AGENCY BOSS',
-    attachments: [
-      {
-        filename: attachmentFilename,
-        content: mediaKit,
-        contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      },
-    ],
+    text: `Здравствуйте! Таблица с актуальным списком площадок и ориентировочными условиями размещения доступна по ссылке: ${mediaKitUrl} AGENCY BOSS`,
     tags: [
       {
         name: 'source',

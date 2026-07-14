@@ -104,7 +104,8 @@ async function sendMediaKit() {
   } catch (error) {
     const message =
       error && typeof error === 'object' && 'data' in error
-        ? (error.data as { statusMessage?: string })?.statusMessage
+        ? (error.data as { message?: string; statusMessage?: string })?.message ||
+          (error.data as { message?: string; statusMessage?: string })?.statusMessage
         : undefined
 
     formStatus.value = 'error'
@@ -223,8 +224,8 @@ async function sendMediaKit() {
         <p class="eyebrow">Площадки</p>
         <h2>Часть медиакита уже на сайте, полный список — в таблице</h2>
         <p>
-          Ниже показана витрина из добавленного файла Agency BOSS April. Полный список каналов,
-          блогеров, ссылок и цен можно скачать одной таблицей.
+          Ниже показана витрина из медиакита Agency BOSS. Полный список каналов,
+          блогеров, ссылок и цен доступен в Google Sheets.
         </p>
       </div>
 
@@ -234,9 +235,9 @@ async function sendMediaKit() {
           <span>{{ stat.label }}</span>
           <p>{{ stat.detail }}</p>
         </div>
-        <a class="download-button" :href="mediaKitUrl" download>
+        <a class="download-button" :href="mediaKitUrl" target="_blank" rel="noreferrer">
           <Download :size="19" />
-          Скачать полный Excel
+          Открыть таблицу
         </a>
       </div>
 
@@ -336,7 +337,7 @@ async function sendMediaKit() {
         <p class="eyebrow">Связь</p>
         <h2>Получите полный медиакит AGENCY BOSS на email</h2>
         <p>
-          Отправим таблицу с площадками и прайсом. Для точной подборки под продукт можно ответить
+          Отправим ссылку на таблицу с площадками и прайсом. Для точной подборки под продукт можно ответить
           на письмо или написать в Telegram: укажите нишу, гео, формат, бюджет и сроки запуска.
         </p>
       </div>
@@ -356,7 +357,7 @@ async function sendMediaKit() {
           />
           <button class="contact-button" type="submit" :disabled="formStatus === 'loading'">
             <Mail :size="20" />
-            {{ formStatus === 'loading' ? 'Отправляем' : 'Получить Excel' }}
+            {{ formStatus === 'loading' ? 'Отправляем' : 'Получить ссылку' }}
           </button>
         </div>
         <p v-if="formMessage" class="form-message" :class="`is-${formStatus}`">
@@ -376,7 +377,7 @@ async function sendMediaKit() {
       <p>Рекламные размещения у блогеров, в Telegram-каналах и creator media.</p>
       <div class="footer-links">
         <a :href="telegramUrl" target="_blank" rel="noreferrer">Telegram</a>
-        <a :href="mediaKitUrl" download>Медиакит Excel</a>
+        <a :href="mediaKitUrl" target="_blank" rel="noreferrer">Медиакит</a>
       </div>
     </footer>
   </main>

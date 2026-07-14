@@ -37,8 +37,9 @@ export interface PricingNote {
   description: string
 }
 
-export const telegramUrl = 'https://t.me/agencyboss'
-export const mediaKitUrl = '/assets/agency-boss-april.xlsx'
+export const telegramUrl = 'https://t.me/AGENCY_BOSS'
+export const mediaKitUrl =
+  'https://docs.google.com/spreadsheets/d/1UzL097-AVyefaGWv5DvXLYQDvh6wWKvFDbR6oIVrVdY/edit?gid=0#gid=0'
 
 export const adFormats: AdFormat[] = [
   {
