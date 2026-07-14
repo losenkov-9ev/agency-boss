@@ -6,7 +6,7 @@ export default defineNuxtConfig({
     mailFrom: process.env.MAIL_FROM || 'AGENCY BOSS <admin@agency-boss.agency>',
     mailReplyTo: process.env.MAIL_REPLY_TO || 'admin@agency-boss.agency',
     public: {
-      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://agencyboss.ru',
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://agency-boss.agency',
     },
   },
   app: {
