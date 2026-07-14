@@ -22,7 +22,7 @@ function resolveMediaKitPath() {
   if (!found) {
     throw createError({
       statusCode: 500,
-      statusMessage: 'Media kit file is not available',
+      message: 'Media kit file is not available',
     })
   }
 
@@ -37,14 +37,14 @@ export default defineEventHandler(async (event) => {
   if (!email || !emailPattern.test(email) || email.length > 254) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Введите корректный email',
+      message: 'Введите корректный email',
     })
   }
 
   if (!config.resendApiKey) {
     throw createError({
       statusCode: 500,
-      statusMessage: 'Email service is not configured',
+      message: 'Email service is not configured',
     })
   }
 
@@ -85,7 +85,7 @@ export default defineEventHandler(async (event) => {
   if (response.error) {
     throw createError({
       statusCode: 502,
-      statusMessage: response.error.message || 'Не удалось отправить письмо',
+      message: response.error.message || 'Не удалось отправить письмо',
     })
   }
 
