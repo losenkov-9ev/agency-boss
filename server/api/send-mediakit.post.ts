@@ -5,13 +5,20 @@ interface SendMediaKitBody {
 }
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const senderPattern = /^([^\r\n<>]+ <[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+>|[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+)$/
 const mediaKitUrl =
   'https://docs.google.com/spreadsheets/d/1UzL097-AVyefaGWv5DvXLYQDvh6wWKvFDbR6oIVrVdY/edit?gid=0#gid=0'
+
+function normalizeEmailConfig(value: string) {
+  return value.trim().replace(/^['"]|['"]$/g, '')
+}
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event)
   const body = await readBody<SendMediaKitBody>(event)
   const email = body.email?.trim().toLowerCase()
+  const mailFrom = normalizeEmailConfig(config.mailFrom)
+  const mailReplyTo = normalizeEmailConfig(config.mailReplyTo)
 
   if (!email || !emailPattern.test(email) || email.length > 254) {
     throw createError({
@@ -27,12 +34,19 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  if (!senderPattern.test(mailFrom) || !emailPattern.test(mailReplyTo)) {
+    throw createError({
+      statusCode: 500,
+      message: 'Email sender is not configured correctly',
+    })
+  }
+
   const resend = new Resend(config.resendApiKey)
 
   const response = await resend.emails.send({
-    from: config.mailFrom,
+    from: mailFrom,
     to: email,
-    replyTo: config.mailReplyTo,
+    replyTo: mailReplyTo,
     subject: 'Медиакит AGENCY BOSS',
     html: `
       <div style="font-family: Arial, sans-serif; color: #111827; line-height: 1.5;">
