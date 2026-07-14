@@ -42,6 +42,11 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
+button,
+input {
+  font: inherit;
+}
+
 .page-shell {
   min-height: 100vh;
   overflow: hidden;
@@ -681,6 +686,73 @@ h1 {
   background: #05070a;
   color: #ffffff;
   box-shadow: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.contact-button:disabled {
+  cursor: progress;
+  opacity: 0.72;
+}
+
+.lead-form {
+  display: grid;
+  gap: 12px;
+  min-width: min(100%, 430px);
+}
+
+.lead-form label {
+  color: #05070a;
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.lead-form-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.lead-form input {
+  min-width: 0;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid rgba(5, 7, 10, 0.18);
+  border-radius: 8px;
+  background: rgba(5, 7, 10, 0.04);
+  color: #05070a;
+  outline: none;
+}
+
+.lead-form input:focus {
+  border-color: #05070a;
+  box-shadow: 0 0 0 3px rgba(49, 199, 255, 0.22);
+}
+
+.lead-form input::placeholder {
+  color: rgba(5, 7, 10, 0.45);
+}
+
+.form-message {
+  margin: 0;
+  font-weight: 800;
+}
+
+.form-message.is-success {
+  color: #087a52;
+}
+
+.form-message.is-error {
+  color: #a40f25;
+}
+
+.telegram-fallback {
+  width: fit-content;
+  color: #05070a;
+  font-weight: 900;
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 .site-footer {
@@ -801,6 +873,10 @@ h1 {
 
   .contact-button {
     width: 100%;
+  }
+
+  .lead-form-row {
+    grid-template-columns: 1fr;
   }
 }
 

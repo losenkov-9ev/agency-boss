@@ -5,10 +5,10 @@ import {
   BarChart3,
   ChevronLeft,
   ChevronRight,
-  CircleDollarSign,
   Clapperboard,
   Download,
   ExternalLink,
+  Mail,
   MessageCircle,
   Play,
   Radio,
@@ -35,7 +35,7 @@ const heroImageUrl = `${siteUrl}/assets/agency-boss-hero.png`
 useSeoMeta({
   title: 'AGENCY BOSS — реклама у YouTube-блогеров и в Telegram-каналах',
   description:
-    'AGENCY BOSS подбирает рекламные размещения у YouTube-блогеров, в Telegram-каналах, Shorts, Twitch, VK, TikTok и MAX. Скачайте медиакит или запросите подборку в Telegram.',
+    'AGENCY BOSS подбирает рекламные размещения у YouTube-блогеров, в Telegram-каналах, Shorts, Twitch, VK, TikTok и MAX. Получите медиакит на email или запросите подборку в Telegram.',
   ogTitle: 'AGENCY BOSS — реклама у YouTube-блогеров и в Telegram',
   ogDescription:
     'Медиакит рекламного агентства для брендов: YouTube, Telegram, Shorts, Twitch, VK, TikTok и MAX.',
@@ -82,6 +82,35 @@ const platformLabels = {
 } as const
 
 const sliderModules = [Navigation, Keyboard, A11y]
+const leadEmail = ref('')
+const formStatus = ref<'idle' | 'loading' | 'success' | 'error'>('idle')
+const formMessage = ref('')
+
+async function sendMediaKit() {
+  formStatus.value = 'loading'
+  formMessage.value = ''
+
+  try {
+    await $fetch('/api/send-mediakit', {
+      method: 'POST',
+      body: {
+        email: leadEmail.value,
+      },
+    })
+
+    formStatus.value = 'success'
+    formMessage.value = 'Медиакит отправлен. Проверьте входящие и папку “Спам”.'
+    leadEmail.value = ''
+  } catch (error) {
+    const message =
+      error && typeof error === 'object' && 'data' in error
+        ? (error.data as { statusMessage?: string })?.statusMessage
+        : undefined
+
+    formStatus.value = 'error'
+    formMessage.value = message || 'Не удалось отправить письмо. Попробуйте еще раз или напишите в Telegram.'
+  }
+}
 </script>
 
 <template>
@@ -305,17 +334,38 @@ const sliderModules = [Navigation, Keyboard, A11y]
     <section id="contact" class="contact-section">
       <div>
         <p class="eyebrow">Связь</p>
-        <h2>Получите подборку YouTube и Telegram-площадок под вашу задачу</h2>
+        <h2>Получите полный медиакит AGENCY BOSS на email</h2>
         <p>
-          Напишите в Telegram: укажите нишу, продукт, гео, желаемый формат, бюджетный коридор
-          и сроки запуска. В ответ подготовим варианты и актуальные условия.
+          Отправим таблицу с площадками и прайсом. Для точной подборки под продукт можно ответить
+          на письмо или написать в Telegram: укажите нишу, гео, формат, бюджет и сроки запуска.
         </p>
       </div>
 
-      <a class="contact-button" :href="telegramUrl" target="_blank" rel="noreferrer">
-        <CircleDollarSign :size="20" />
-        Запросить стоимость
-      </a>
+      <form class="lead-form" @submit.prevent="sendMediaKit">
+        <label for="lead-email">Email для медиакита</label>
+        <div class="lead-form-row">
+          <input
+            id="lead-email"
+            v-model="leadEmail"
+            type="email"
+            name="email"
+            inputmode="email"
+            autocomplete="email"
+            placeholder="name@company.com"
+            required
+          />
+          <button class="contact-button" type="submit" :disabled="formStatus === 'loading'">
+            <Mail :size="20" />
+            {{ formStatus === 'loading' ? 'Отправляем' : 'Получить Excel' }}
+          </button>
+        </div>
+        <p v-if="formMessage" class="form-message" :class="`is-${formStatus}`">
+          {{ formMessage }}
+        </p>
+        <a class="telegram-fallback" :href="telegramUrl" target="_blank" rel="noreferrer">
+          Или написать в Telegram
+        </a>
+      </form>
     </section>
 
     <footer class="site-footer">
